@@ -26,13 +26,19 @@ function onImgClick(e) {
 	if (e.target.tagName!='IMG') {
 		return
 	}
-	const original = `<img src="${e.target.dataset.source}"/>`;
-	addEventListener('keydown', onEscPress)
-	return basicLightbox.create(original).show()
-}
-function onEscPress(e) {
-	if (e.key != 'Escape') {
-		return
+	const original = `<img src="${e.target.dataset.source}" alt="${e.target.alt}"/>`;
+	const instance = basicLightbox.create(original, {
+		onShow: () => {
+			addEventListener('keydown', onEscPress)
+		},
+		onClose: () => {
+			removeEventListener('keydown', onEscPress)
+		},
+	});
+	const onEscPress = (e) => {
+		if (e.code === "Escape") {
+			instance.close();
+		}
 	}
-	removeEventListener('keydown', onEscPress);
+	instance.show()
 }
